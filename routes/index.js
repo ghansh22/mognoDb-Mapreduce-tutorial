@@ -97,37 +97,60 @@ routes.get('/mapR2', (req, res) => {
     // let reduceFunc = (professor, count) => {
     //     return Array.sum(count);
     // }
-
-    async.waterfall([
-        function () {
-            var mapFunc = function (callback) {
-                emit(this.professor, 1);
-            }
-            var reduceFunc = function (professor, count) {
-                return Array.sum(count);
-            }
-            let teacher = "Alice Jones";
-            let result1 = db.classes.mapReduce(mapFunc, reduceFunc,
-                { query: { professor: teacher }, out: "map_ex7" }
-            );
-            callback(null, result1);
-        },
-        function (arg1, arg2, callback) {
-            db.map_ex7.find((err, result) => {
-                if (err) { res.json(err) } else {
-                    if (result) {
-                        res.json(result);
-                    } else { res.json('no result!') }
-                }
-            });
-        }
-    ],
-        function(err, result){
-            if(err){res.json(err)}else{
-                if(result){
-                    res.json(result);
-                }else{res.json('no result!')}
-            }
+    // async.waterfall([
+    //     function () {
+    //         var mapFunc = function (callback) {
+    //             emit(this.professor, 1);
+    //         }
+    //         var reduceFunc = function (professor, count) {
+    //             return Array.sum(count);
+    //         }
+    //         let teacher = "Alice Jones";
+    //         let result1 = db.classes.mapReduce(mapFunc, reduceFunc,
+    //             { query: { professor: teacher }, out: "map_ex7" }
+    //         );
+    //         callback(null, result1);
+    //     },
+    //     function (arg1, arg2, callback) {
+    //         db.map_ex7.find((err, result) => {
+    //             if (err) { res.json(err) } else {
+    //                 if (result) {
+    //                     res.json(result);
+    //                 } else { res.json('no result!') }
+    //             }
+    //         });
+    //     }
+    // ],
+    //     function(err, result){
+    //         if(err){res.json(err)}else{
+    //             if(result){
+    //                 res.json(result);
+    //             }else{res.json('no result!')}
+    //         }
+    //     }
+    // );
+    var mapFunc = function (callback) {
+        emit(this.professor, 1);
+    }
+    var reduceFunc = function (professor, count) {
+        return Array.sum(count);
+    }
+    let teacher = "Paul Slugman";
+    db.classes.mapReduce(mapFunc, reduceFunc,
+        { query: { professor: teacher }, out: "map_ex7" }, (err, result)=> {
+            if(err){res.json(err)}else{if(result){
+                db.map_ex7.find((err, result) => {
+                    if(err){res.json(err)}else{
+                        if(result){
+                            res.json(result);
+                        }else{
+                            res.json('no result!');
+                        }
+                    }
+                });
+            }else{
+                res.json('no data!')
+            }}
         }
     );
 });
