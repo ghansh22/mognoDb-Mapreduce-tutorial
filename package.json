@@ -1,0 +1,22 @@
+{
+  "name": "mognodb-mapreduce-tutorial",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ghansh22/mognoDb-Mapreduce-tutorial.git"
+  },
+  "author": "ghanshyam baviskar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ghansh22/mognoDb-Mapreduce-tutorial/issues"
+  },
+  "homepage": "https://github.com/ghansh22/mognoDb-Mapreduce-tutorial#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  }
+}
