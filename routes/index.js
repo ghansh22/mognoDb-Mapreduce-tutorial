@@ -1,6 +1,7 @@
 const routes = require('express').Router();
 const mongojs = require('mongojs');
 const db = mongojs('mapreduce', ['classes']);
+const async = require('async');
 
 routes.get('/', (req, res) => {
     // res.send('test');
@@ -46,8 +47,6 @@ routes.get('/', (req, res) => {
     // res.json(testSum);
 });
 
-
-
 routes.get('/mapR1', (req, res) => {
     /*************************************************************************************
      * sample map job 
@@ -76,21 +75,61 @@ routes.get('/mapR1', (req, res) => {
 
     db.classes.mapReduce(mapFunc, reduceFunc, { out: "map_ex" });
     db.map_ex.find((err, result) => {
-        if(err){res.json(err)}else{
-            if(result){
+        if (err) { res.json(err) } else {
+            if (result) {
                 res.json(result);
-            }else{res.json('no result!')}
+            } else { res.json('no result!') }
         }
     });
 
-
-
     /*************************************************************************************
-     * excluding reducer 
+     * excluding reduce jobs
      */
     // var reduceFunc = function (student, values) {
     //     return values[0]
     // };
+});
+
+routes.get('/mapR2', (req, res) => {
+    // let mapFunc = () => {
+    //     emit(this.professor, 1);
+    // }
+    // let reduceFunc = (professor, count) => {
+    //     return Array.sum(count);
+    // }
+
+    async.waterfall([
+        function () {
+            var mapFunc = function (callback) {
+                emit(this.professor, 1);
+            }
+            var reduceFunc = function (professor, count) {
+                return Array.sum(count);
+            }
+            let teacher = "Alice Jones";
+            let result1 = db.classes.mapReduce(mapFunc, reduceFunc,
+                { query: { professor: teacher }, out: "map_ex7" }
+            );
+            callback(null, result1);
+        },
+        function (arg1, arg2, callback) {
+            db.map_ex7.find((err, result) => {
+                if (err) { res.json(err) } else {
+                    if (result) {
+                        res.json(result);
+                    } else { res.json('no result!') }
+                }
+            });
+        }
+    ],
+        function(err, result){
+            if(err){res.json(err)}else{
+                if(result){
+                    res.json(result);
+                }else{res.json('no result!')}
+            }
+        }
+    );
 });
 
 module.exports = routes;
